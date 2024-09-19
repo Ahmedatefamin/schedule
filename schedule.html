@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class Schedule PowerPoint</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            height: 100%;
+            overflow: hidden;
+        }
+        .slide {
+            height: 100%;
+            display: none;
+            padding: 50px;
+            box-sizing: border-box;
+            background: linear-gradient(135deg, #3498db, #8e44ad);
+            color: white;
+        }
+        .slide h1 {
+            font-size: 2.5em;
+            margin-bottom: 30px;
+        }
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        .schedule-item {
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.9em;
+        }
+        .lecture {
+            background-color: rgba(144, 238, 144, 0.7);  /* Light green */
+        }
+        .lab {
+            background-color: rgba(255, 165, 0, 0.7);  /* Orange */
+        }
+        .controls {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        button {
+            font-size: 1em;
+            padding: 10px 20px;
+            margin: 0 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="slideContainer"></div>
+    <div class="controls">
+        <button onclick="changeSlide(-1)">Previous</button>
+        <button onclick="changeSlide(1)">Next</button>
+    </div>
+
+    <script>
+        const schedule = {
+            'Saturday': [],
+            'Sunday': [],
+            'Monday': [
+                { time: '10:40-12:20', course: 'IT Project (1)', location: 'N209', instructor: 'Fouad', type: 'lab' },
+                { time: '12:20-2', course: 'Artificial Intelligence', location: 'NG38', instructor: 'Fouad', type: 'lecture' },
+                { time: '2-3:40', course: 'IT Project (1)', location: 'N241', instructor: '....', type: 'lab' },
+            ],
+            'Tuesday': [
+                { time: '9-10:40', course: 'Information Engineering', location: 'N203', instructor: 'Naser', type: 'lab' },
+                { time: '12:20-2', course: 'Digital Signal', location: 'N203', instructor: 'Telbany', type: 'lecture' },
+                { time: '2-3:40', course: 'Image Processing', location: 'N203', instructor: 'Fatma', type: 'lecture' },
+            ],
+            'Wednesday': [
+                { time: '9-10:40', course: 'Pattern Recognition', location: 'N105', instructor: '...', type: 'lab' },
+                { time: '10:40-12:20', course: 'Pattern Recognition', location: 'N203', instructor: 'Maysa', type: 'lecture' },
+                { time: '12:20-2', course: 'Information Engineering', location: 'N139', instructor: '...', type: 'lecture' },
+                { time: '2-3:40', course: 'Artificial Intelligence', location: 'N137', instructor: '...', type: 'lecture' },
+            ],
+            'Thursday': [
+                { time: '9-10:40', course: 'Digital Signal processing', location: 'NG3', instructor: '', type: 'lab' },
+                { time: '10:40-12:20', course: 'Image Processing', location: 'NG36', instructor: '...', type: 'lab' },
+            ],
+        };
+
+        let currentSlide = 0;
+        const days = Object.keys(schedule);
+
+        function createSlides() {
+            const container = document.getElementById('slideContainer');
+            days.forEach((day, index) => {
+                const slide = document.createElement('div');
+                slide.className = 'slide';
+                slide.id = `slide${index}`;
+                
+                let content = `<h1>${day}</h1><div class="schedule-grid">`;
+                const timeSlots = ['9-10:40', '10:40-12:20', '12:20-2', '2-3:40'];
+                
+                timeSlots.forEach(slot => {
+                    const classForSlot = schedule[day].find(cls => cls.time === slot);
+                    if (classForSlot) {
+                        content += `
+                            <div class="schedule-item ${classForSlot.type}">
+                                <strong>${classForSlot.time}</strong><br>
+                                ${classForSlot.course}<br>
+                                Location: ${classForSlot.location}<br>
+                                Instructor: ${classForSlot.instructor || 'TBA'}
+                            </div>
+                        `;
+                    } else {
+                        content += `<div class="schedule-item"></div>`;
+                    }
+                });
+                
+                content += '</div>';
+                slide.innerHTML = content;
+                container.appendChild(slide);
+            });
+        }
+
+        function showSlide(n) {
+            const slides = document.getElementsByClassName('slide');
+            slides[currentSlide].style.display = 'none';
+            currentSlide = (n + slides.length) % slides.length;
+            slides[currentSlide].style.display = 'block';
+        }
+
+        function changeSlide(n) {
+            showSlide(currentSlide + n);
+        }
+
+        createSlides();
+        showSlide(0);
+    </script>
+</body>
+</html>
